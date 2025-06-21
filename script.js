@@ -45,18 +45,20 @@ const PlayerModule = (() => {
 
 // Controls the UI aspect of the game
 const DisplaController = (function(){
-    // Open our modal
-    const openModal = () => dialog.showModal();
-    
+    // Query selectors for boardCells i.e cells of the board on the UI side and that of the dialog
     const boardCells = document.querySelectorAll(".cell");
     const dialog = document.querySelector(".dialog");
-
+    
+    // Open our modal. Wrapped it inside a function so that I can call it as a method of DisplayController.
+    const openModal = () => dialog.showModal();
+    
+    // Function that renders on the frontend based on what is in the gameboard array/matrice
     const render = () => {
-        const board = Gameboard.getBoard();
-        boardCells.forEach(cell => {
-            const row = parseInt(cell.dataset.row);
-            const col = parseInt(cell.dataset.column);
-            cell.textContent = board[row][col];
+        const board = Gameboard.getBoard(); // we set board to the gameboard matrice
+        boardCells.forEach(cell => {        // now for each cell in the boardCell which is the frontend of the game board
+            const row = parseInt(cell.dataset.row);     // we get the row of the cell using the dataset attribute we've given to each div
+            const col = parseInt(cell.dataset.column);  // and the same with the column
+            cell.textContent = board[row][col];     // Then we add the value of the array item of that particular row and column as the display text.
         });
     };
 
@@ -75,7 +77,28 @@ const DisplaController = (function(){
 
 // Calls all the above methods and simulates a game
 const GameController = (function(){
+    // Initially display the Modal
+    DisplaController.openModal();
+
+    const playerDetailForm = document.querySelector(".playerDetails") 
+    let playerXName;
+    let playerOName;
+
+    // Now we ge the player details - for Player X and Player O
+    playerDetailForm.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        playerXName = e.target.elements.playerX.value;
+        playerOName = e.target.elements.playerO.value;
+
+    });
+
+    let playerX = PlayerModule.createPlayer(playerXName, "X");
+    let playerO = PlayerModule.createPlayer(playerOName, "O");
+
     
+
+
 
 })();
 
