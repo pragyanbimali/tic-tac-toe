@@ -1,12 +1,76 @@
+//This IIFE stores all the details and methods of a Gameboard
+
+const Gameboard = (function(){
+    // This is a Matrice(?) of the gameboard. I used the 3 arrays inside an array
+    //  to better access the values of each of the cells/items. I also needed 
+    //  this to simplify my code to check for row winner. 
+    const gameboard = [
+        ["", "", ""],
+        ["", "", ""],
+        ["", "", ""]
+    ]
+
+    // To make my gameboard private, I declare this getBoard method to return the gameboard
+    const getBoard = () => gameboard;
+
+    // Function that clears the gameboard by setting all the rows and columns to empty string.
+    const clearBoard =  () => {
+        for (let row = 0; row < 3; row++) {
+            for (let col = 0; col < 3; col++) {
+            gameboard[row][col] = "";
+            }
+        }
+    }
+
+    // This sets the marker in the gameboard array. We feed it the row and column to get the position of the cell in the gameboard and then a marker to mark the cell with.
+    const setMarker = (row, col, marker) => {
+        gameboard[row][col] = marker;
+    }
+
+    // Adding this getCell method to later then get values of a cell to do compares for the win/tie logic
+    const getCell = (row, col) => gameboard[row][col];
+    
+    // Return all the function as methods of Gameboard
+    return {getBoard, getCell, setMarker, clearBoard};
+
+})();
+
+
+// The player module is a factory function inside an IIFE that we'll later use to read create players X and O with their names and markers.
+const PlayerModule = (() => {
+  const createPlayer = (name, marker) => ({ name, marker });
+  return { createPlayer };
+})();
+
+
+// Controls the UI aspect of the game
+const DisplaController = (function(){
+    
+
+
+})();
+
+
+// Calls all the above methods and simulates a game
+const GameController = (function(){
+    
+
+})();
+
+
+
+
+//================================================================================
+/*
 const Gameboard = {
-    gameboard: [
+    gameboard: [            -- DONE
         ["", "", ""],
         ["", "", ""],
         ["", "", ""]
     ]
 }
 
-const markers = ["X", "O"]
+const markers = ["X", "O"]  
 
 let currentOption = markers[0];
 
@@ -86,3 +150,4 @@ function clearBoard() {
     }
   }
 }
+*/
