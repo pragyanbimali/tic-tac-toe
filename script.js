@@ -23,7 +23,7 @@ const Gameboard = (function(){
     }
 
     // This sets the marker in the gameboard array. We feed it the row and column to get the position of the cell in the gameboard and then a marker to mark the cell with.
-    const setMarker = (row, col, marker) => {
+    const setMarkerBoard = (row, col, marker) => {
         gameboard[row][col] = marker;
     }
 
@@ -45,8 +45,30 @@ const PlayerModule = (() => {
 
 // Controls the UI aspect of the game
 const DisplaController = (function(){
+    // Open our modal
+    const openModal = () => dialog.showModal();
     
+    const boardCells = document.querySelectorAll(".cell");
+    const dialog = document.querySelector(".dialog");
 
+    const render = () => {
+        const board = Gameboard.getBoard();
+        boardCells.forEach(cell => {
+            const row = parseInt(cell.dataset.row);
+            const col = parseInt(cell.dataset.column);
+            cell.textContent = board[row][col];
+        });
+    };
+
+    const clearDisplay = () => {
+        boardCells.forEach(cell => {
+            cell.textContent = "";
+        })
+    }
+    
+    const closeModal = () => dialog.close();
+
+    return {openModal, render, clearDisplay}
 
 })();
 
