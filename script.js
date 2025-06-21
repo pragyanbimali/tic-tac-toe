@@ -70,7 +70,7 @@ const DisplaController = (function(){
     
     const closeModal = () => dialog.close();
 
-    return {openModal, render, clearDisplay}
+    return {openModal, render, clearDisplay, closeModal}
 
 })();
 
@@ -79,8 +79,9 @@ const DisplaController = (function(){
 const GameController = (function(){
     // Initially display the Modal
     DisplaController.openModal();
+    DisplaController.render();
 
-    const playerDetailForm = document.querySelector(".playerDetails") 
+    const playerDetailForm = document.querySelector(".playerDetails");
     let playerXName;
     let playerOName;
 
@@ -96,10 +97,54 @@ const GameController = (function(){
     let playerX = PlayerModule.createPlayer(playerXName, "X");
     let playerO = PlayerModule.createPlayer(playerOName, "O");
 
+    let currentPlayer = playerX;
+
     
+    function checkForWinner() {
+        //for rows
+        Gameboard.gameboard.forEach(row => {
+        if (row.join("") === 'XXX' || row.join("") === 'OOO') {
+            alert("You win!")
+            boardCells.forEach(cell => cell.textContent = "");
+            clearBoard();
+        }
+        })
 
+        //for columns
+        for (let col = 0; col < 3; col++) {
+        if (
+            Gameboard.gameboard[0][col] &&
+            Gameboard.gameboard[0][col] === Gameboard.gameboard[1][col] &&
+            Gameboard.gameboard[1][col] === Gameboard.gameboard[2][col]
+        ) {
+            alert("You win!")
+            boardCells.forEach(cell => cell.textContent = "");
+            clearBoard();
+        }
+        }
 
+        //for diagonals
+        if (
+        Gameboard.gameboard[0][0] && 
+        Gameboard.gameboard[0][0] === Gameboard.gameboard[1][1] &&
+        Gameboard.gameboard[1][1] === Gameboard.gameboard[2][2]
+        ) {
+        alert("You win!")
+        boardCells.forEach(cell => cell.textContent = "");
+        clearBoard();
+        }
 
+        if (
+        Gameboard.gameboard[0][2] && 
+        Gameboard.gameboard[0][2] === Gameboard.gameboard[1][1] &&
+        Gameboard.gameboard[1][1] === Gameboard.gameboard[2][0] 
+        ) {
+        alert("You win!")
+        boardCells.forEach(cell => cell.textContent = "");
+        clearBoard();
+        }
+
+    }
 })();
 
 
