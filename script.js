@@ -31,7 +31,7 @@ const Gameboard = (function(){
     const getCell = (row, col) => gameboard[row][col];
     
     // Return all the function as methods of Gameboard
-    return {getBoard, getCell, setMarker, clearBoard};
+    return {getBoard, getCell, setMarkerBoard, clearBoard};
 
 })();
 
@@ -44,13 +44,19 @@ const PlayerModule = (() => {
 
 
 // Controls the UI aspect of the game
-const DisplaController = (function(){
-    // Query selectors for boardCells i.e cells of the board on the UI side and that of the dialog
+const DisplayController = (function(){
+    // Declaring some queryselectors
     const boardCells = document.querySelectorAll(".cell");
-    const dialog = document.querySelector(".dialog");
+    const dialogAskName = document.querySelector(".ask-name");
+    const dialogAlertMsg = document.querySelector(".alert-msg");
+    const alertMsgText = document.querySelector(".alert-msg-text");
+    const alertButton = document.querySelector(".alert-btn");
     
-    // Open our modal. Wrapped it inside a function so that I can call it as a method of DisplayController.
-    const openModal = () => dialog.showModal();
+    // Open our display modal. Wrapped it inside a function so that I can call it as a method of DisplayController.
+    const openDialogAskName = () => dialogAskName.showModal();
+
+    // Open out alert message modal.
+    const openDialogAlertMsg = () => dialogAlertMsg.showModal();
     
     // Function that renders on the frontend based on what is in the gameboard array/matrice
     const render = () => {
@@ -62,28 +68,51 @@ const DisplaController = (function(){
         });
     };
 
+    // Function that clears the display of the frontend component just like the clearboard function in the Gameboard module 
     const clearDisplay = () => {
         boardCells.forEach(cell => {
-            cell.textContent = "";
+            cell.textContent = "";      
         })
     }
-    
-    const closeModal = () => dialog.close();
 
-    return {openModal, render, clearDisplay, closeModal}
+    // I'm creating a function/method of DsiplayController to alert messages in a modal when a player wins or game finishes in a tie.
+    const alertMsg = (msg) => {
+        openDialogAlertMsg();
+        alertMsgText.textContent = msg
+    }
+
+    // Closes the Modal when user clicks the close button. Then we clear board and 
+    alertButton.addEventListener("click", () => {
+        closeDialogAlertMsg();
+        clearDisplay();
+        Gameboard.clearBoard();
+    });
+    
+    // Functions to close the modals
+    const closeDialogAskName = () => dialogAskName.close();
+    const closeDialogAlertMsg = () => dialogAlertMsg.close();
+
+    return {openDialogAskName, render, alertMsg,  clearDisplay, closeDialogAskName}
 
 })();
 
 
 // Calls all the above methods and simulates a game
 const GameController = (function(){
+    const boardCells = document.querySelectorAll(".cell");
+    
     // Initially display the Modal
-    DisplaController.openModal();
-    DisplaController.render();
+    DisplayController.openModal();
+    DisplayController.render();
+
+
 
     const playerDetailForm = document.querySelector(".playerDetails");
     let playerXName;
     let playerOName;
+
+    // Lets call the Player X first
+    let currentPlayer = playerX;
 
     // Now we ge the player details - for Player X and Player O
     playerDetailForm.addEventListener("submit", function(e) {
@@ -97,16 +126,32 @@ const GameController = (function(){
     let playerX = PlayerModule.createPlayer(playerXName, "X");
     let playerO = PlayerModule.createPlayer(playerOName, "O");
 
-    let currentPlayer = playerX;
+    // Add click events for each cell in the Gameboard UI
+    boardCells.forEach(cell => {
+    cell.addEventListener("click", function() {
+        
+        let row = parseInt(cell.dataset.row);
+        let column = parseInt(cell.dataset.column);
+
+        if (Gameboard.gameboard[row][column] !== "") {
+            alert("Cell already Marked!")
+            return;
+        }
+
+        Gameboard.gameboard[row][column] = currentPlayer.marker;
+        DisplayController.render();
+
+        currentPlayer = currentPlayer === playerX ? playerO : playerX;
+        checkForWinner();
+    })
+})
 
     
     function checkForWinner() {
         //for rows
         Gameboard.gameboard.forEach(row => {
         if (row.join("") === 'XXX' || row.join("") === 'OOO') {
-            alert("You win!")
-            boardCells.forEach(cell => cell.textContent = "");
-            clearBoard();
+            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
         }
         })
 
@@ -117,9 +162,7 @@ const GameController = (function(){
             Gameboard.gameboard[0][col] === Gameboard.gameboard[1][col] &&
             Gameboard.gameboard[1][col] === Gameboard.gameboard[2][col]
         ) {
-            alert("You win!")
-            boardCells.forEach(cell => cell.textContent = "");
-            clearBoard();
+            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
         }
         }
 
@@ -129,9 +172,7 @@ const GameController = (function(){
         Gameboard.gameboard[0][0] === Gameboard.gameboard[1][1] &&
         Gameboard.gameboard[1][1] === Gameboard.gameboard[2][2]
         ) {
-        alert("You win!")
-        boardCells.forEach(cell => cell.textContent = "");
-        clearBoard();
+            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
         }
 
         if (
@@ -139,9 +180,13 @@ const GameController = (function(){
         Gameboard.gameboard[0][2] === Gameboard.gameboard[1][1] &&
         Gameboard.gameboard[1][1] === Gameboard.gameboard[2][0] 
         ) {
-        alert("You win!")
-        boardCells.forEach(cell => cell.textContent = "");
-        clearBoard();
+            DisplayController.alertMsg(`${currentPlayer} is the winner!`)    
+        }
+
+        // Check for draw
+        const isBoardFull = board.flat().every(cell => cell !== "");
+        if (isBoardFull) {
+            DisplayController.alertMsg("It's a tie!") 
         }
 
     }
