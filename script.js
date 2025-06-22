@@ -87,6 +87,8 @@ const DisplayController = (function(){
         clearDisplay();
         Gameboard.clearBoard();
     });
+
+    // 
     
     // Functions to close the modals
     const closeDialogAskName = () => dialogAskName.close();
@@ -102,7 +104,7 @@ const GameController = (function(){
     const boardCells = document.querySelectorAll(".cell");
     
     // Initially display the Modal
-    DisplayController.openModal();
+    DisplayController.openDialogAskName();
     DisplayController.render();
 
 
@@ -111,8 +113,7 @@ const GameController = (function(){
     let playerXName;
     let playerOName;
 
-    // Lets call the Player X first
-    let currentPlayer = playerX;
+  
 
     // Now we ge the player details - for Player X and Player O
     playerDetailForm.addEventListener("submit", function(e) {
@@ -125,6 +126,9 @@ const GameController = (function(){
 
     let playerX = PlayerModule.createPlayer(playerXName, "X");
     let playerO = PlayerModule.createPlayer(playerOName, "O");
+
+    // Lets call the Player X first
+    let currentPlayer = playerX;
 
     // Add click events for each cell in the Gameboard UI
     boardCells.forEach(cell => {
