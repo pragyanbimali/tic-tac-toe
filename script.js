@@ -31,7 +31,7 @@ const Gameboard = (function(){
     const getCell = (row, col) => gameboard[row][col];
     
     // Return all the function as methods of Gameboard
-    return {getBoard, getCell, setMarkerBoard, clearBoard};
+    return {gameboard, getBoard, getCell, setMarkerBoard, clearBoard};
 
 })();
 
@@ -86,6 +86,7 @@ const DisplayController = (function(){
         closeDialogAlertMsg();
         clearDisplay();
         Gameboard.clearBoard();
+        GameController.startGame();
     });
 
     // 
@@ -102,60 +103,40 @@ const DisplayController = (function(){
 // Calls all the above methods and simulates a game
 const GameController = (function(){
     const boardCells = document.querySelectorAll(".cell");
-    
+
+    const playerDetailForm = document.querySelector(".playerDetailForm");
+    let playerX;
+    let playerO;
+    let currentPlayer;
+
+    const startGame = () => {
+    // Lets call the Player X first
+    currentPlayer = playerX;
     // Initially display the Modal
     DisplayController.openDialogAskName();
     DisplayController.render();
-
-
-
-    const playerDetailForm = document.querySelector(".playerDetails");
-    let playerXName;
-    let playerOName;
-
-  
+    }
 
     // Now we ge the player details - for Player X and Player O
     playerDetailForm.addEventListener("submit", function(e) {
         e.preventDefault();
 
-        playerXName = e.target.elements.playerX.value;
-        playerOName = e.target.elements.playerO.value;
+        let playerXName = e.target.elements.playerX.value;
+        let playerOName = e.target.elements.playerO.value;
 
+        playerX = PlayerModule.createPlayer(playerXName, "X");
+        playerO = PlayerModule.createPlayer(playerOName, "O");
+        currentPlayer = playerX;
+
+        DisplayController.closeDialogAskName();
     });
 
-    let playerX = PlayerModule.createPlayer(playerXName, "X");
-    let playerO = PlayerModule.createPlayer(playerOName, "O");
 
-    // Lets call the Player X first
-    let currentPlayer = playerX;
-
-    // Add click events for each cell in the Gameboard UI
-    boardCells.forEach(cell => {
-    cell.addEventListener("click", function() {
-        
-        let row = parseInt(cell.dataset.row);
-        let column = parseInt(cell.dataset.column);
-
-        if (Gameboard.gameboard[row][column] !== "") {
-            alert("Cell already Marked!")
-            return;
-        }
-
-        Gameboard.gameboard[row][column] = currentPlayer.marker;
-        DisplayController.render();
-
-        currentPlayer = currentPlayer === playerX ? playerO : playerX;
-        checkForWinner();
-    })
-})
-
-    
     function checkForWinner() {
         //for rows
         Gameboard.gameboard.forEach(row => {
         if (row.join("") === 'XXX' || row.join("") === 'OOO') {
-            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
+            DisplayController.alertMsg(`${currentPlayer.name} is the winner!`)
         }
         })
 
@@ -166,7 +147,7 @@ const GameController = (function(){
             Gameboard.gameboard[0][col] === Gameboard.gameboard[1][col] &&
             Gameboard.gameboard[1][col] === Gameboard.gameboard[2][col]
         ) {
-            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
+            DisplayController.alertMsg(`${currentPlayer.name} is the winner!`)
         }
         }
 
@@ -176,7 +157,7 @@ const GameController = (function(){
         Gameboard.gameboard[0][0] === Gameboard.gameboard[1][1] &&
         Gameboard.gameboard[1][1] === Gameboard.gameboard[2][2]
         ) {
-            DisplayController.alertMsg(`${currentPlayer} is the winner!`)
+            DisplayController.alertMsg(`${currentPlayer.name} is the winner!`)
         }
 
         if (
@@ -184,17 +165,43 @@ const GameController = (function(){
         Gameboard.gameboard[0][2] === Gameboard.gameboard[1][1] &&
         Gameboard.gameboard[1][1] === Gameboard.gameboard[2][0] 
         ) {
-            DisplayController.alertMsg(`${currentPlayer} is the winner!`)    
+            DisplayController.alertMsg(`${currentPlayer.name} is the winner!`)    
         }
 
         // Check for draw
-        const isBoardFull = board.flat().every(cell => cell !== "");
+        const isBoardFull = Gameboard.gameboard.flat().every(cell => cell !== "");
         if (isBoardFull) {
             DisplayController.alertMsg("It's a tie!") 
         }
 
     }
+
+
+    // Add click events for each cell in the Gameboard UI
+    boardCells.forEach(cell => {
+    cell.addEventListener("click", function() {
+        
+        let row = parseInt(cell.dataset.row);
+        let column = parseInt(cell.dataset.column);
+
+        if (Gameboard.gameboard[row][column] !== "") {
+            DisplayController.alertMsg("Cell already Marked!")
+            return;
+        }
+
+        Gameboard.gameboard[row][column] = currentPlayer.marker;
+        DisplayController.render();
+
+        checkForWinner();
+        currentPlayer = currentPlayer === playerX ? playerO : playerX;
+    })
+})
+        
+    return {startGame};
 })();
+
+GameController.startGame();
+
 
 
 
