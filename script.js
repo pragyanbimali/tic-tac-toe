@@ -109,19 +109,22 @@ const DisplayController = (function(){
 const GameController = (function(){
     const boardCells = document.querySelectorAll(".cell");
     const gameContainer = document.querySelector(".gameboard-container");
-
+    const turnText = document.querySelector(".turn-text");
     const playerDetailForm = document.querySelector(".playerDetailForm");
+
     let playerX;
     let playerO;
     let currentPlayer;
 
     const startGame = () => {
-    // Lets call the Player X first
-    currentPlayer = playerX;
-    // Initially display the Modal
-    DisplayController.openDialogAskName();
-    DisplayController.render();
-    gameContainer.style.opacity = 0;
+        // Lets call the Player X first
+        currentPlayer = playerX;
+        
+        // Initially display the Modal
+        DisplayController.openDialogAskName();
+        DisplayController.render();
+        gameContainer.style.opacity = 0;
+        turnText.style.opacity = 0;
     }
 
     // Now we ge the player details - for Player X and Player O
@@ -135,11 +138,15 @@ const GameController = (function(){
         playerO = PlayerModule.createPlayer(playerOName, "O");
         currentPlayer = playerX;
 
+        turnText.textContent = `It's ${currentPlayer.name}'s turn!`
+
         DisplayController.closeDialogAskName();
 
         gameContainer.style.opacity = 1;
+        turnText.style.opacity = 1;
     });
 
+    
 
     function checkForWinner() {
         //for rows
@@ -203,6 +210,8 @@ const GameController = (function(){
 
         checkForWinner();
         currentPlayer = currentPlayer === playerX ? playerO : playerX;
+        
+        turnText.textContent = `It's ${currentPlayer.name}'s turn!`
     })
 })
         
@@ -211,98 +220,3 @@ const GameController = (function(){
 
 GameController.startGame();
 
-
-
-
-
-//================================================================================
-/*
-const Gameboard = {
-    gameboard: [            -- DONE
-        ["", "", ""],
-        ["", "", ""],
-        ["", "", ""]
-    ]
-}
-
-const markers = ["X", "O"]  
-
-let currentOption = markers[0];
-
-const boardCells = document.querySelectorAll(".cell");
-
-boardCells.forEach(cell => {
-    cell.addEventListener("click", function() {
-        
-        let row = parseInt(cell.dataset.row);
-        let column = parseInt(cell.dataset.column);
-
-        if (Gameboard.gameboard[row][column] !== "") {
-            alert("Cell already Marked!")
-            return;
-        }
-
-        Gameboard.gameboard[row][column] = currentOption;
-        cell.textContent = currentOption;
-
-        currentOption = currentOption === markers[0] ? markers[1] : markers[0]
-        checkForWinner();
-        console.log(Gameboard.gameboard);
-    })
-})
-
-
-function checkForWinner() {
-    //for rows
-   Gameboard.gameboard.forEach(row => {
-    if (row.join("") === 'XXX' || row.join("") === 'OOO') {
-        alert("You win!")
-        boardCells.forEach(cell => cell.textContent = "");
-        clearBoard();
-    }
-   })
-
-   //for columns
-    for (let col = 0; col < 3; col++) {
-      if (
-        Gameboard.gameboard[0][col] &&
-        Gameboard.gameboard[0][col] === Gameboard.gameboard[1][col] &&
-        Gameboard.gameboard[1][col] === Gameboard.gameboard[2][col]
-      ) {
-        alert("You win!")
-        boardCells.forEach(cell => cell.textContent = "");
-        clearBoard();
-      }
-    }
-
-    //for diagonals
-    if (
-      Gameboard.gameboard[0][0] && 
-      Gameboard.gameboard[0][0] === Gameboard.gameboard[1][1] &&
-      Gameboard.gameboard[1][1] === Gameboard.gameboard[2][2]
-    ) {
-      alert("You win!")
-      boardCells.forEach(cell => cell.textContent = "");
-      clearBoard();
-    }
-
-    if (
-      Gameboard.gameboard[0][2] && 
-      Gameboard.gameboard[0][2] === Gameboard.gameboard[1][1] &&
-      Gameboard.gameboard[1][1] === Gameboard.gameboard[2][0] 
-    ) {
-      alert("You win!")
-      boardCells.forEach(cell => cell.textContent = "");
-      clearBoard();
-    }
-
-}
-
-function clearBoard() {
-  for (let row = 0; row < 3; row++) {
-    for (let col = 0; col < 3; col++) {
-      Gameboard.gameboard[row][col] = "";
-    }
-  }
-}
-*/
