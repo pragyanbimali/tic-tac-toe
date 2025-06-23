@@ -83,10 +83,14 @@ const DisplayController = (function(){
 
     // Closes the Modal when user clicks the close button. Then we clear board and 
     alertButton.addEventListener("click", () => {
-        closeDialogAlertMsg();
-        clearDisplay();
-        Gameboard.clearBoard();
-        GameController.startGame();
+        // Only if we are receiving a Win or Tie alert, we clear the displays, else
+        if (alertMsgText.textContent !== "Cell already Marked!") {
+            closeDialogAlertMsg();
+            clearDisplay();
+            Gameboard.clearBoard();
+        } else {    // in case of Cell already Marked alert, we simply close the modal and let the play continue.
+            closeDialogAlertMsg();
+        }
     });
 
     // 
@@ -185,7 +189,7 @@ const GameController = (function(){
         let column = parseInt(cell.dataset.column);
 
         if (Gameboard.gameboard[row][column] !== "") {
-            DisplayController.alertMsg("Cell already Marked!")
+            DisplayController.alertMsg("Cell already Marked!");
             return;
         }
 
