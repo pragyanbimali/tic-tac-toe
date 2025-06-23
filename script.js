@@ -51,6 +51,7 @@ const DisplayController = (function(){
     const dialogAlertMsg = document.querySelector(".alert-msg-dialog");
     const alertMsgText = document.querySelector(".alert-msg-text");
     const alertButton = document.querySelector(".alert-btn");
+    const submitButton = document.querySelector('button[type="submit"]');
     
     // Open our display modal. Wrapped it inside a function so that I can call it as a method of DisplayController.
     const openDialogAskName = () => dialogAskName.showModal();
@@ -89,6 +90,7 @@ const DisplayController = (function(){
             clearDisplay();
             Gameboard.clearBoard();
             GameController.startGame();
+            submitButton.textContent = "New Game";
         } else {    // in case of Cell already Marked alert, we simply close the modal and let the play continue.
             closeDialogAlertMsg();
         }
