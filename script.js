@@ -48,7 +48,7 @@ const DisplayController = (function(){
     // Declaring some queryselectors
     const boardCells = document.querySelectorAll(".cell");
     const dialogAskName = document.querySelector(".ask-name");
-    const dialogAlertMsg = document.querySelector(".alert-msg");
+    const dialogAlertMsg = document.querySelector(".alert-msg-dialog");
     const alertMsgText = document.querySelector(".alert-msg-text");
     const alertButton = document.querySelector(".alert-btn");
     
@@ -88,6 +88,7 @@ const DisplayController = (function(){
             closeDialogAlertMsg();
             clearDisplay();
             Gameboard.clearBoard();
+            GameController.startGame();
         } else {    // in case of Cell already Marked alert, we simply close the modal and let the play continue.
             closeDialogAlertMsg();
         }
@@ -107,6 +108,7 @@ const DisplayController = (function(){
 // Calls all the above methods and simulates a game
 const GameController = (function(){
     const boardCells = document.querySelectorAll(".cell");
+    const gameContainer = document.querySelector(".gameboard-container");
 
     const playerDetailForm = document.querySelector(".playerDetailForm");
     let playerX;
@@ -119,6 +121,7 @@ const GameController = (function(){
     // Initially display the Modal
     DisplayController.openDialogAskName();
     DisplayController.render();
+    gameContainer.style.opacity = 0;
     }
 
     // Now we ge the player details - for Player X and Player O
@@ -133,6 +136,8 @@ const GameController = (function(){
         currentPlayer = playerX;
 
         DisplayController.closeDialogAskName();
+
+        gameContainer.style.opacity = 1;
     });
 
 
